@@ -36,8 +36,23 @@ async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)):
 
 #종목 별로 종가의 변화를 dataframe 형식으로 return
 @router.get("/krx_closing/{stock_name}")
-async def get_krx_closing(stock_name: str):
-    return
+async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)):
+    #해당 종목의 종가 및 예측 종가 가져오기
+    results = db.query(Stock.date,Stock.closing).filter(
+        Stock.name == stock_name
+    ).all()
+
+    #날짜와 종가 구분하여 response로 return
+    date_list = []
+    closing_list = []
+
+    for date, closing in results:
+        date_list.append(date)
+        closing_list.append(closing)
+    return {
+        "date": date_list,
+        "closing": closing_list
+    }
 
 #반도체 관련 종목의 실시간 뉴스 url을 return
 @router.get("/news")
