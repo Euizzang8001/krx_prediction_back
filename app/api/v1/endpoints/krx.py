@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_db, get_mongodb
-from app.schemas.krx import prediction, closing, news
-from typing import List
 from sqlalchemy.orm import Session
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
@@ -34,24 +32,27 @@ async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)):
     "predicted_closing": predicted_closing
     }
 
-#종목 별로 종가의 변화를 dataframe 형식으로 return
+#종목 별로 종가 history와 예측 종가 history를 return
 @router.get("/krx_closing/{stock_name}")
 async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)):
     #해당 종목의 종가 및 예측 종가 가져오기
-    results = db.query(Stock.date,Stock.closing).filter(
+    results = db.query(Stock.date,Stock.closing, Stock.predicted_closing).filter(
         Stock.name == stock_name
     ).all()
 
-    #날짜와 종가 구분하여 response로 return
+    #날짜, 종가, 예측 종가를 구분한 후, response로 전달
     date_list = []
     closing_list = []
+    predicted_closing_list = []
 
-    for date, closing in results:
+    for date, closing, predicted_closing in results:
         date_list.append(date)
         closing_list.append(closing)
+        predicted_closing_list.append(predicted_closing)
     return {
         "date": date_list,
-        "closing": closing_list
+        "closing": closing_list,
+        "predicted_closing": predicted_closing_list
     }
 
 #반도체 관련 종목의 실시간 뉴스 url을 return
@@ -67,8 +68,3 @@ async def get_news(client: MongoClient = Depends(get_mongodb)):
 
     #json화하여 Response로 return
     return JSONResponse(content=json_util.loads(json_util.dumps(results)))
-
-#해당 종목의 모델의 예측값과 실제 값을 return
-@router.get("/model_history/{stock_name}")
-async def get_model_history(stock_name: str):
-    return

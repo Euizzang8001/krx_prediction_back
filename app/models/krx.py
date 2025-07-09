@@ -1,8 +1,10 @@
 from sqlalchemy import Column, String, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
 
+#database와 class로 선언된 table을 mapping해주는 declarative_base객체 선언
 Base = declarative_base()
 
+#Stock table 구현
 class Stock(Base):
     __tablename__ = 'stocks'
 
