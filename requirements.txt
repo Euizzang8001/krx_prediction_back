@@ -1,0 +1,8 @@
+python-dotenv
+uvicorn
+fastapi
+pykrx
+sqlalchemy
+pymongo
+psycopg2
+alembic

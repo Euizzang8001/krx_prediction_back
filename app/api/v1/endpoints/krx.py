@@ -1,11 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from app.api.deps import get_db
+from app.schemas.krx import prediction, closing, news
+from typing import List
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+from app.models.krx import Stock
 
 router = APIRouter()
 
 #종목 별로 가장 최근 날짜의 종가, 가장 최근 날짜로 예측한 예측 변화율과 예측 종가 get하기
 @router.get("/krx_prediction/{stock_name}")
-async def get_krx_prediction(stock_name: str):
-    return
+async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)):
+    today = datetime.now()
+    while today.weekday() > 5:
+        today -= timedelta(days=1)
+
+    result = db.query(Stock).filter(
+        Stock.name == stock_name, Stock.date == today.strftime("%Y%m%d")
+    ).first()
+    return result
 
 #종목 별로 종가의 변화를 dataframe 형식으로 return
 @router.get("/krx_closing/{stock_name}")
