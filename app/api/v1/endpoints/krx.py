@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.api.deps import get_db
+from app.api.deps import get_db, get_mongodb
 from app.schemas.krx import prediction, closing, news
 from typing import List
 from sqlalchemy.orm import Session
+from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
+import pendulum
 from app.models.krx import Stock
+from bson import json_util
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -27,8 +31,17 @@ async def get_krx_closing(stock_name: str):
 
 #반도체 관련 종목의 실시간 뉴스 url을 return
 @router.get("/news")
-async def get_news(stock_name: str):
-    return
+async def get_news(client: MongoClient = Depends(get_mongodb)):
+    #news를 저장한 DB에 연결
+    database = client['news_db']
+    #현재 시간을 받아 현재 시간부터 1시간 전 사이에 출간된 뉴스들 가져오기
+    now = pendulum.now()
+    col_name = now.strftime("%Y-%m-%d %H")
+    collection = database[col_name]
+    results = collection.find({}, {'_id': False})
+
+    #json화하여 Response로 return
+    return JSONResponse(content=json_util.loads(json_util.dumps(results)))
 
 #해당 종목의 모델의 예측값과 실제 값을 return
 @router.get("/model_history/{stock_name}")

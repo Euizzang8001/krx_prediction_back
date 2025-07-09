@@ -6,10 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 db_user = os.getenv("DB_USER")
-print(db_user)
 DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 
-print(DATABASE_URL)
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
