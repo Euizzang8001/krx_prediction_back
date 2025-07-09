@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 #mongo db 연결
-uri = f"mongodb+srv://{os.getenv("MONGO_USER")}:{os.getenv("MONGO_PASSWORD")}@{os.getenv("MONGO_NAME")}.{os.getenv("MONGO_URL")}/?retryWrites=true&w=majority&appName={os.getenv("MONGO_NAME")}"
+uri = f'mongodb+srv://{os.getenv("MONGO_USER")}:{os.getenv("MONGO_PASSWORD")}@{os.getenv("MONGO_NAME")}.{os.getenv("MONGO_URL")}/?retryWrites=true&w=majority&appName={os.getenv("MONGO_NAME")}'
 
 #mongodb client 객체 선언
 Client = MongoClient(uri, server_api=ServerApi('1'))

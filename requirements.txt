@@ -3,7 +3,7 @@ uvicorn
 fastapi
 pykrx
 sqlalchemy
-pymongo
+pymongo[srv]
 psycopg2
 alembic
 pendulum
