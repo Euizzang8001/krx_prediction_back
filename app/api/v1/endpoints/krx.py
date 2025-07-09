@@ -3,16 +3,19 @@ from app.api.deps import get_db, get_mongodb
 from sqlalchemy.orm import Session
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
+from typing import List
 import pendulum
 from app.models.krx import Stock
 from bson import json_util
 from fastapi.responses import JSONResponse
 
+from app.schemas.krx import News, KrxHistory, KrxPrediction
+
 router = APIRouter()
 
 #종목 별로 가장 최근 날짜의 종가, 가장 최근 날짜로 예측한 예측 변화율과 예측 종가 get하기
 @router.get("/krx_prediction/{stock_name}")
-async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)):
+async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)) -> KrxPrediction:
     #오늘 날짜 가져오기
     today = datetime.now()
     #장 마감 이전이라면, 가장 최근의 마감된 장에 해당하는 날짜 찾기
@@ -26,15 +29,15 @@ async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)):
         Stock.name == stock_name, Stock.date == today.strftime("%Y%m%d")
     ).first()
 
-    return {
-    "closing": closing,
-    "predicted_closing_ratio": predicted_closing_ratio,
-    "predicted_closing": predicted_closing
-    }
+    return KrxPrediction(
+        closing = closing,
+        predicted_closing_ratio = predicted_closing_ratio,
+        predicted_closing = predicted_closing
+    )
 
 #종목 별로 종가 history와 예측 종가 history를 return
 @router.get("/krx_closing/{stock_name}")
-async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)):
+async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)) -> KrxHistory:
     #해당 종목의 종가 및 예측 종가 가져오기
     results = db.query(Stock.date,Stock.closing, Stock.predicted_closing).filter(
         Stock.name == stock_name
@@ -49,15 +52,17 @@ async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)):
         date_list.append(date)
         closing_list.append(closing)
         predicted_closing_list.append(predicted_closing)
-    return {
-        "date": date_list,
-        "closing": closing_list,
-        "predicted_closing": predicted_closing_list
-    }
+
+    response = KrxHistory(
+        date_list = date_list,
+        closing_list = closing_list,
+        predicted_closing_list=predicted_closing_list
+    )
+    return response
 
 #반도체 관련 종목의 실시간 뉴스 url을 return
 @router.get("/news")
-async def get_news(client: MongoClient = Depends(get_mongodb)):
+async def get_news(client: MongoClient = Depends(get_mongodb)) -> List[News]:
     #news를 저장한 DB에 연결
     database = client['news_db']
     #현재 시간을 받아 현재 시간부터 1시간 전 사이에 출간된 뉴스들 가져오기
@@ -66,5 +71,6 @@ async def get_news(client: MongoClient = Depends(get_mongodb)):
     collection = database[col_name]
     results = collection.find({}, {'_id': False})
 
+    json_result = json_util.loads(json_util.dumps(results))
     #json화하여 Response로 return
-    return JSONResponse(content=json_util.loads(json_util.dumps(results)))
+    return json_result
