@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 import os
 
 #env파일 가져오기

@@ -7,3 +7,4 @@ pymongo[srv]
 psycopg2
 alembic
 pendulum
+pydantic-settings
