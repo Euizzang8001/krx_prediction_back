@@ -1,6 +1,9 @@
-name: Yeogijeogi Dev Build and Deploy
+name: KRX Prediction Server Build and Deploy
 
 on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -13,7 +16,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DEV_DOCKER_IMAGE }}
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -48,7 +51,7 @@ jobs:
       DEV_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
       DEV_DOCKER_CONTAINER: ${{ secrets.DOCKER_CONTAINER }}
       DEV_DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DEV_PORT: ${{ secrets.SERVER_PORT }}
+      SERVER_PORT: ${{ secrets.SERVER_PORT }}
       LOCAL_PORT: ${{ secrets.LOCAL_PORT }}
     steps:
       - name: Docker Login (on self-hosted)
