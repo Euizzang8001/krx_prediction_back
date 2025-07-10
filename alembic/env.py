@@ -4,8 +4,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
-import os
-from dotenv import load_dotenv
+from app.core.config import settings
 from app.models.krx import Base
 from app.db.session import engine
 
@@ -43,8 +42,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    load_dotenv()
-    url = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    url = f"postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
     context.configure(
         url=url,
@@ -64,8 +62,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    load_dotenv()
-    url = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+    url = f"postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
     connectable = engine
 

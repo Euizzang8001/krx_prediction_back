@@ -1,13 +1,9 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from dotenv import load_dotenv
-import os
-
-#환경변수 가져오기
-load_dotenv()
+from app.core.config import settings
 
 #mongo db 연결
-uri = f'mongodb+srv://{os.getenv("MONGO_USER")}:{os.getenv("MONGO_PASSWORD")}@{os.getenv("MONGO_NAME")}.{os.getenv("MONGO_URL")}/?retryWrites=true&w=majority&appName={os.getenv("MONGO_NAME")}'
+uri = f'mongodb+srv://{settings.MONGO_USER}:{settings.MONGO_PASSWORD}@{settings.MONGO_NAME}.{settings.MONGO_URL}/?retryWrites=true&w=majority&appName={settings.MONGO_NAME}'
 
 #mongodb client 객체 선언
 Client = MongoClient(uri, server_api=ServerApi('1'))
