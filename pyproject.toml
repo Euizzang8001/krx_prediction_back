@@ -1,0 +1,25 @@
+[project]
+name = "krx-prediction-back"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Euizzang8001",email = "qkrdmlcks55@korea.ac.kr"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi (>=0.116.0,<0.117.0)",
+    "uvicorn[standard] (>=0.35.0,<0.36.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "pykrx (>=1.0.51,<2.0.0)",
+    "sqlalchemy (>=2.0.41,<3.0.0)",
+    "pymongo[srv] (>=4.13.2,<5.0.0)",
+    "psycopg2 (>=2.9.10,<3.0.0)",
+    "alembic (>=1.16.3,<2.0.0)",
+    "pendulum (>=3.1.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
