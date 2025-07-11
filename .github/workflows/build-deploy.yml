@@ -30,6 +30,8 @@ jobs:
       - name: Set up .env FILE
         run: |
           echo "$ENV_FILE" >> app/.env
+          echo "ENV_FILE:"
+          echo "$ENV_FILE" | head -n 10
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
 
@@ -61,12 +63,6 @@ jobs:
         run: |
           sudo docker stop ${{ env.DOCKER_CONTAINER }} || true && sudo docker rm ${{ env.DOCKER_CONTAINER }} || true
           sudo docker rmi ${{ env.DOCKER_HUB_USERNAME }}/${{ env.DOCKER_IMAGE }} || true
-
-      - name: Set up .env FILE
-        run: |
-          echo "$ENV_FILE" >> app/.env
-        env:
-          ENV_FILE: ${{ secrets.ENV_FILE }}
 
       - name: Run Container
         run: |
