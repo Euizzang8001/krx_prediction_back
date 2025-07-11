@@ -38,7 +38,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/krx_prediction:back
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
           annotations: ${{ steps.meta.outputs.annotations }}
           provenance: true
           sbom: true
@@ -48,10 +48,10 @@ jobs:
     runs-on: self-hosted
     env:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      DEV_DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
-      DEV_DOCKER_CONTAINER: ${{ secrets.DOCKER_CONTAINER }}
-      DEV_DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       SERVER_PORT: ${{ secrets.SERVER_PORT }}
+      DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}
+      DOCKER_CONTAINER: ${{ secrets.DOCKER_CONTAINER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       LOCAL_PORT: ${{ secrets.LOCAL_PORT }}
     steps:
       - name: Docker Login (on self-hosted)
@@ -60,7 +60,7 @@ jobs:
       - name: Stop and Remove Old Containers
         run: |
           sudo docker stop ${{ env.DOCKER_CONTAINER }} || true && sudo docker rm ${{ env.DOCKER_CONTAINER }} || true
-          sudo docker rmi ${{ env.DOCKER_HUB_USERNAME }}/${{ env.DEV_DOCKER_IMAGE }} || true
+          sudo docker rmi ${{ env.DOCKER_HUB_USERNAME }}/${{ env.DOCKER_IMAGE }} || true
 
       - name: Run Container
         run: |
