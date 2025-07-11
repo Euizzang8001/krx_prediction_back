@@ -27,9 +27,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Set up .env FILE
+      - name: Create .env file on EC2
         run: |
-          echo "$ENV_FILE" > .env
+          printf "%s" "$ENV_FILE" > .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
 
@@ -65,12 +65,6 @@ jobs:
         run: |
           sudo docker stop ${{ env.DOCKER_CONTAINER }} || true && sudo docker rm ${{ env.DOCKER_CONTAINER }} || true
           sudo docker rmi ${{ env.DOCKER_HUB_USERNAME }}/${{ env.DOCKER_IMAGE }} || true
-
-      - name: Create .env on EC2
-        run: |
-          printf "%s" "$ENV_FILE" > app/.env
-        env:
-          ENV_FILE: ${{ secrets.ENV_FILE }}
 
       - name: Run Container
         run: |
