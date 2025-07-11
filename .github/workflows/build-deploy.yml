@@ -29,9 +29,13 @@ jobs:
 
       - name: Set up .env FILE
         run: |
-          echo "${{ secrets.ENV_FILE }}" >> .env
+          echo "$ENV_FILE" > .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
+
+      - name: Check .env file exists
+        run: |
+          ls -l .env && echo ".env exists"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
