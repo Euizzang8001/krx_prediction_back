@@ -58,15 +58,15 @@ jobs:
 
       - name: Create .env
         run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> app/.env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> app/.env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> app/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> app/.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> app/.env
-          echo "MONGO_NAME=${{ secrets.MONGO_NAME }}" >> app/.env
-          echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> app/.env
-          echo "MONGO_USER=${{ secrets.MONGO_USER }}" >> app/.env
-          echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> app/.env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "MONGO_NAME=${{ secrets.MONGO_NAME }}" >> .env
+          echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
+          echo "MONGO_USER=${{ secrets.MONGO_USER }}" >> .env
+          echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> .env
       
 
       - name: Run Dev Container
