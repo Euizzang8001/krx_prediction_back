@@ -31,6 +31,7 @@ jobs:
         run: |
           touch app/.env
           echo "$ENV_FILE" >> app/.env
+          cat app/.env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
 
