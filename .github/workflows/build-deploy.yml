@@ -29,7 +29,7 @@ jobs:
 
       - name: Set up .env FILE
         run: |
-          echo "$ENV_FILE" >> .env
+          echo "${{ secrets.ENV_FILE }}" >> .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
 
