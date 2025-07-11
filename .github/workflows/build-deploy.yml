@@ -62,7 +62,13 @@ jobs:
           sudo docker stop ${{ env.DOCKER_CONTAINER }} || true && sudo docker rm ${{ env.DOCKER_CONTAINER }} || true
           sudo docker rmi ${{ env.DOCKER_HUB_USERNAME }}/${{ env.DOCKER_IMAGE }} || true
 
+      - name: Set up .env FILE
+        run: |
+          echo "$ENV_FILE" >> app/.env
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+
       - name: Run Container
         run: |
             sudo docker pull ${{ env.DOCKER_HUB_USERNAME}}/${{ env.DOCKER_IMAGE }}
-            sudo docker run --env-file app/.env -d -p ${{ env.SERVER_PORT }}:${{ env.LOCAL_PORT }} --name ${{ env.DOCKER_CONTAINER }} ${{ env.DOCKER_HUB_USERNAME}}/${{ env.DOCKER_IMAGE }}
+            sudo docker run --env-file ./.env -d -p ${{ env.SERVER_PORT }}:${{ env.LOCAL_PORT }} --name ${{ env.DOCKER_CONTAINER }} ${{ env.DOCKER_HUB_USERNAME}}/${{ env.DOCKER_IMAGE }}
