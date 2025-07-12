@@ -62,11 +62,13 @@ async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)) -> Krx
 
 #반도체 관련 종목의 실시간 뉴스 url을 return
 @router.get("/news")
-async def get_news(db = Depends(get_mongodb)) -> List[News]:
+async def get_news(client: MongoClient = Depends(get_mongodb)) -> List[News]:
+    #news를 저장한 DB에 연결
+    database = client['news_db']
     #현재 시간을 받아 현재 시간부터 1시간 전 사이에 출간된 뉴스들 가져오기
     now = pendulum.now()
     col_name = now.strftime("%Y-%m-%d %H")
-    collection = db[col_name]
+    collection = database[col_name]
     results = collection.find({}, {'_id': False})
 
     json_result = json_util.loads(json_util.dumps(results))

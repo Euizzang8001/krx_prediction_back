@@ -11,6 +11,9 @@ def get_db() -> Generator:
         db.close()
 
 #mongodb 연결 의존성 설정
-def get_mongodb():
-    mongo_db = Client['news_db']
-    return mongo_db
+def get_mongodb() -> Generator:
+    mongo_db = Client
+    try:
+        yield mongo_db
+    finally:
+        mongo_db.close()
