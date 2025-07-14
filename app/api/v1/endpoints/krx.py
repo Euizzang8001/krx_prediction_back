@@ -65,9 +65,15 @@ async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)) -> Krx
 async def get_news(db = Depends(get_mongodb)) -> List[News]:
     #현재 시간을 받아 현재 시간부터 1시간 전 사이에 출간된 뉴스들 가져오기
     now = pendulum.now()
-    col_name = now.strftime("%Y-%m-%d %H")
-    collection = db[col_name]
-    results = collection.find({}, {'_id': False})
+    results = []
+
+    #뉴스를 발견할 때까지 시간 순회
+    while len(results) == 0:
+        col_name = now.strftime("%Y-%m-%d %H")
+        collection = db[col_name]
+        results = collection.find({}, {'_id': False})
+
+        now = now.subtract(hours = 1)
 
     json_result = json_util.loads(json_util.dumps(results))
     #json화하여 Response로 return
