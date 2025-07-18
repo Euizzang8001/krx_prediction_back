@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
+import pendulum
 from typing import List
 import pendulum
 from app.models.krx import Stock
@@ -18,12 +19,12 @@ router = APIRouter()
 @router.get("/krx_prediction/{stock_name}")
 async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)) -> KrxPrediction:
     #오늘 날짜 가져오기
-    today = datetime.now()
+    today = pendulum.now("Asia/Seoul")
     #장 마감 이전이라면, 가장 최근의 마감된 장에 해당하는 날짜 찾기
     if today.hour < 15 or (today.hour == 15 and today.minute < 30):
-        today -=timedelta(days=1)
+        today = today.subtract(days = 1)
     while today.weekday() > 5:
-        today -= timedelta(days=1)
+        today = today.subtract(days = 1)
 
     #가장 최근 종가와 그 정보를 바탕으로 예측한 종가 변화율과 예측 종가 가져와 response
     closing, predicted_closing_ratio, predicted_closing = db.query(Stock.closing, Stock.predicted_closing_ratio, Stock.predicted_closing).filter(
