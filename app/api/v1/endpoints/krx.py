@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_db, get_mongodb
 from sqlalchemy.orm import Session
+from sqlalchemy import asc
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
 from typing import List
@@ -39,8 +40,12 @@ async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)) -> 
 @router.get("/krx_closing/{stock_name}")
 async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)) -> KrxHistory:
     #해당 종목의 종가 및 예측 종가 가져오기
-    results = db.query(Stock.date,Stock.closing, Stock.predicted_closing).filter(
+    results = db.query(
+        Stock.date,Stock.closing, Stock.predicted_closing
+    ).filter(
         Stock.name == stock_name
+    ).order_by(
+        asc(Stock.date)
     ).all()
 
     #날짜, 종가, 예측 종가를 구분한 후, response로 전달
