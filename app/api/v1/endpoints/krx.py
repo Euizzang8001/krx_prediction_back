@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_db, get_mongodb
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
 from typing import List
@@ -16,17 +17,13 @@ router = APIRouter()
 #종목 별로 가장 최근 날짜의 종가, 가장 최근 날짜로 예측한 예측 변화율과 예측 종가 get하기
 @router.get("/krx_prediction/{stock_name}")
 async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)) -> KrxPrediction:
-    #오늘 날짜 가져오기
-    today = datetime.now()
-    #장 마감 이전이라면, 가장 최근의 마감된 장에 해당하는 날짜 찾기
-    if today.hour < 15 or (today.hour == 15 and today.minute < 30):
-        today -=timedelta(days=1)
-    while today.weekday() > 5:
-        today -= timedelta(days=1)
-
     #가장 최근 종가와 그 정보를 바탕으로 예측한 종가 변화율과 예측 종가 가져와 response
-    closing, predicted_closing_ratio, predicted_closing = db.query(Stock.closing, Stock.predicted_closing_ratio, Stock.predicted_closing).filter(
-        Stock.name == stock_name, Stock.date == today.strftime("%Y%m%d")
+    closing, predicted_closing_ratio, predicted_closing = db.query(
+        Stock.closing, Stock.predicted_closing_ratio, Stock.predicted_closing
+    ).filter(
+        Stock.name == stock_name
+    ).order_by(
+        desc(Stock.date)
     ).first()
 
     return KrxPrediction(
