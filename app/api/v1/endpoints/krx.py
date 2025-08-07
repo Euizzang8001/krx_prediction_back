@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps import get_db, get_mongodb
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, asc, distinct
 from pymongo.mongo_client import MongoClient
 from datetime import datetime, timedelta
 from typing import List
@@ -35,9 +35,11 @@ async def get_krx_prediction(stock_name: str, db: Session = Depends(get_db)) -> 
 #종목 별로 종가 history와 예측 종가 history를 return
 @router.get("/krx_closing/{stock_name}")
 async def get_krx_closing(stock_name: str, db: Session = Depends(get_db)) -> KrxHistory:
-    #해당 종목의 종가 및 예측 종가 가져오기
-    results = db.query(Stock.date,Stock.closing, Stock.predicted_closing).filter(
+    #해당 종목의 종가 및 예측 종가 가져오기(날짜 마다 중복 없게 + 날짜로 오름차순 정렬)
+    results = db.query(distinct(Stock.date), Stock.closing, Stock.predicted_closing).filter(
         Stock.name == stock_name
+    ).order_by(
+        asc(Stock.date)
     ).all()
 
     #날짜, 종가, 예측 종가를 구분한 후, response로 전달
