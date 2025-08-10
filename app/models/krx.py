@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Integer, Float
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import ARRAY
 
 #database와 class로 선언된 table을 mapping해주는 declarative_base객체 선언
 Base = declarative_base()
@@ -20,3 +21,11 @@ class Stock(Base):
     predicted_closing = Column(Float)
     next_day_closing_change_ratio = Column(Float)
     news_num = Column(Integer)
+
+#뉴스 점수 history table 구현
+class News_Score(Base):
+    __tablename__ = 'news_scores'
+
+    object_id = Column(String, primary_key=True)
+    scores = Column(ARRAY(Float), nullable=False)
+
