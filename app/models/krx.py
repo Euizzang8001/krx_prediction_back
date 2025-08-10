@@ -27,5 +27,5 @@ class News_Score(Base):
     __tablename__ = 'news_scores'
 
     object_id = Column(String, primary_key=True)
-    scores = Column(ARRAY(Float))
+    scores = Column(ARRAY(Float), nullable=False)
 
